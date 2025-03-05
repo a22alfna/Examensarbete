@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exjobb</title>
+</head>
+<body>
+    <h1>Welcome to My Simple Website</h1>
+    <p>Type something in the search box below:</p>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button onclick="searchFunction()">Search</button>
+    </div>
+
+    <script>
+        function searchFunction() {
+            let query = document.getElementById("searchInput").value;
+            alert("You searched for: " + query);
+        }
+    </script>
+
+</body>
+</html>
