@@ -20,9 +20,10 @@ if (!$conn) {
         $query = 'SELECT * FROM "Songs" WHERE title ILIKE $1 AND artist ILIKE $2';
         $params = array("%$title%", "%$artist%");
     } elseif (!empty($title)) {
-        $query = 'SELECT * FROM "Songs" WHERE title = $1';
+        $query = 'SELECT * FROM "Songs" WHERE title ILIKE $1';
         $params = array("%$title%");
-    } elseif (!empty($artist)) {
+    } 
+    elseif (!empty($artist)) {
         $query = 'SELECT * FROM "Songs" WHERE artist ILIKE $1';
         $params = array("%$artist%");
     }
@@ -32,7 +33,7 @@ if (!$conn) {
     if ($result && pg_num_rows($result) > 0) {
         while ($row = pg_fetch_assoc($result)) {
             $output .= "<div style='margin-bottom:10px;'>";
-            $output .= "<strong>🎵 " . htmlspecialchars($row['title']) . "</strong><br>";
+            $output .= "<strong> " . htmlspecialchars($row['title']) . "</strong><br>";
             $output .= "Artist: " . htmlspecialchars($row['artist']) . "<br>";
             $output .= "Rank: " . htmlspecialchars($row['rank']) . "<br>";
             $output .= "Date: " . htmlspecialchars($row['date']) . "<br>";
