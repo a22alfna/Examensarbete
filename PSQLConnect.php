@@ -62,8 +62,11 @@ if (!$conn) {
     <link rel="stylesheet" href="Exjobb.css">
 </head>
 <body>
-    <h1>Welcome to My Simple Website</h1>
-    <p>Type something in the search box below:</p>
+    <div id="welcome">
+        <h1>PostgreSQL Search</h1>
+        <p>Type something in the search box below:</p>
+    </div>
+    
 
     <div class="search-container">
         <form method="POST" action="">
