@@ -4,7 +4,7 @@ import os
 def splitta_csv(filväg, rader_per_fil, output_mapp):
     os.makedirs(output_mapp, exist_ok=True)
 
-    valda_kolumner = [
+    inkluderade_kolumner = [
         "id", "title", "rank", "date", "artist",
         "url", "region", "chart", "trend", "streams"
     ]
@@ -21,8 +21,8 @@ def splitta_csv(filväg, rader_per_fil, output_mapp):
         if "Unnamed: 0" in chunk.columns:
             chunk = chunk.rename(columns={"Unnamed: 0": "id"})
 
-        # Plocka ut de 10 kolumnerna du vill ha
-        chunk = chunk[valda_kolumner]
+        # Plocka ut de 10 kolumnerna som ska finnas med
+        chunk = chunk[inkluderade_kolumner]
 
         filnamn = os.path.join(output_mapp, f"output_{idx}.csv")
         chunk.to_csv(filnamn, index=False, encoding='utf-8')
