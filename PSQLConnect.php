@@ -47,7 +47,7 @@ if (!empty($fullText)) {
 if (!$conn) {
     $output = "Database connection failed.";
 }elseif (empty($fullText) && (!empty($title) || !empty($artist))) {
-    // Dynamically build the query
+
     if (!empty($title) && !empty($artist)) {
         $query = 'SELECT * FROM "Songs" WHERE title ILIKE $1 AND artist ILIKE $2';
         $params = array("%$title%", "%$artist%");
@@ -102,7 +102,7 @@ if (!$conn) {
     <div id="searchForms">
         <div id="Keyword">
             <form method="POST" action="">
-                <label for="fullText">Full Text Search:</label><br><br>
+                <label for="fullText">Keyword Search:</label><br><br>
                 <label for="artist">Title:</label><br>
                 <input type="text" name="title" id="title" placeholder="Sök efter Title" value="<?php echo htmlspecialchars($title); ?>"><br>
                 <label for="artist">Artist:</label><br>

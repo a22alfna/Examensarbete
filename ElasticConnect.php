@@ -1,28 +1,22 @@
 <?php
+$searchMode = $_POST['searchMode'] ?? '';
 $title = $_POST['title'] ?? '';
 $artist = $_POST['artist'] ?? '';
-$output = '';
+$fullText = $_POST['fullText'] ?? '';
 
-if (!empty($title) || !empty($artist)) {
+$output = '';
+//Keyword search
+if ($searchMode === 'keyword' && (!empty($title) || !empty($artist))) {
+    
     $search = [];
 
     if (!empty($title)) {
-        $search[] = [
-            'match' => [
-                'title' => $title  
-            ]
-        ];
+        $search[] = ['term' => ['title.keyword' => $title]];
     }
-
     if (!empty($artist)) {
-        $search[] = [
-            'match' => [
-                'artist' => $artist 
-            ]
-        ];
+        $search[] = ['term' => ['artist.keyword' => $artist]];
     }
 
-    // Elasticsearch query
     $query = [
         'size' => 50,
         'query' => [
@@ -31,8 +25,22 @@ if (!empty($title) || !empty($artist)) {
             ]
         ]
     ];
+} 
+//Full text search
+elseif ($searchMode === 'fullText' && !empty($fullText)) {
+    $query = [
+        'size' => 50,
+        'query' => [
+            'multi_match' => [
+                'query' => $fullText,
+                'fields' => ['title', 'artist']
+            ]
+        ]
+    ];
+}
 
-    // CURL-anrop till Elasticsearch
+// Run search if query is set
+if (isset($query)) {
     $ch = curl_init('http://localhost:9200/songs_index_new/_search');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -46,7 +54,7 @@ if (!empty($title) || !empty($artist)) {
         foreach ($data['hits']['hits'] as $hit) {
             $row = $hit['_source'];
             $output .= "<div style='margin-bottom:10px;'>";
-            $output .= "<strong> " . htmlspecialchars($row['title'] ?? '') . "</strong><br>";
+            $output .= "<strong>" . htmlspecialchars($row['title'] ?? '') . "</strong><br>";
             $output .= "Artist: " . htmlspecialchars($row['artist'] ?? '') . "<br>";
             $output .= "Rank: " . htmlspecialchars($row['rank'] ?? '') . "<br>";
             $output .= "Date: " . htmlspecialchars($row['date'] ?? '') . "<br>";
@@ -61,8 +69,9 @@ if (!empty($title) || !empty($artist)) {
         $output = "No results found.";
     }
 } else {
-    $output = "Please enter a song title or artist to search.";
+    $output = "Please enter a search term.";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -79,17 +88,33 @@ if (!empty($title) || !empty($artist)) {
         <p>Type something in the search box below:</p>
     </div>
 
-    <div class="search-container">
+    <div id="searchForms" style="display: flex; gap: 40px;">
+    <!-- Fulltext Search -->
+    <div>
         <form method="POST" action="">
-            <label for="title">Song Title:</label><br>
-            <input type="text" name="title" id="title" value="<?php echo htmlspecialchars($title); ?>"><br><br>
-
-            <label for="artist">Artist:</label><br>
-            <input type="text" name="artist" id="artist" value="<?php echo htmlspecialchars($artist); ?>"><br><br>
-
-            <input type="submit" value="Search">
+            <label for="fullText">Keyword Search:</label><br><br>
+            <label for="artist">Title:</label><br>
+            <input type="hidden" name="searchMode" value="fulltext">
+            <label for="fulltext">Search title and/or artist:</label><br>
+            <input type="text" name="fulltext" id="fulltext" value="<?php echo htmlspecialchars($fulltextQuery); ?>"><br><br>
+            <input type="submit" value="Fulltext Search">
         </form>
     </div>
+
+    <!-- Keyword Search -->
+    <div>
+        <form method="POST" action="">
+            <h3>Keyword (Exact Match) Search</h3>
+            <input type="hidden" name="searchMode" value="keyword">
+            <label for="title">Title:</label><br>
+            <input type="text" name="title" id="title" value="<?php echo htmlspecialchars($title); ?>"><br><br>
+            <label for="artist">Artist:</label><br>
+            <input type="text" name="artist" id="artist" value="<?php echo htmlspecialchars($artist); ?>"><br><br>
+            <input type="submit" value="Keyword Search">
+        </form>
+    </div>
+</div>
+
 
     <div id="outputField">
         <?php echo $output; ?>
