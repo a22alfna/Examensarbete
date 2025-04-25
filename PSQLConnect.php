@@ -7,7 +7,6 @@ $password = "Studier2022!";
 
 $title = $_POST['title'] ?? '';
 $artist = $_POST['artist'] ?? '';
-
 $fullText = $_POST['fullText'] ?? '';
 
 $output = '';
@@ -49,18 +48,17 @@ if (!$conn) {
 }elseif (empty($fullText) && (!empty($title) || !empty($artist))) {
 
     if (!empty($title) && !empty($artist)) {
-        $query = 'SELECT * FROM "Songs" WHERE title ILIKE $1 AND artist ILIKE $2';
-        $params = array("%$title%", "%$artist%");
+        $query = 'SELECT * FROM "Songs" WHERE title = $1 AND artist = $2';
+         $params = array("$title", "$artist"); //%$title% "%$artist%"
     } elseif (!empty($title)) {
-        $query = 'SELECT * FROM "Songs" WHERE title ILIKE $1';
-        $params = array("%$title%");
-    } 
-    elseif (!empty($artist)) {
-        $query = 'SELECT * FROM "Songs" WHERE artist ILIKE $1';
-        $params = array("%$artist%");
+        $query = 'SELECT * FROM "Songs" WHERE title = $1';
+         $params = array("$title");// %$title%
+    } elseif (!empty($artist)) {
+        $query = 'SELECT * FROM "Songs" WHERE artist = $1'; //ILIKE $1 utbytt till $artist för exakta keyword sök
+         $params = array("$artist"); //"%$artist%"
     }
 
-    $result = pg_query_params($conn, $query, $params);
+    $result = pg_query_params($conn, $query, $params); //$params borttagen för exakta keyword sök
 
     if ($result && pg_num_rows($result) > 0) {
         while ($row = pg_fetch_assoc($result)) {
