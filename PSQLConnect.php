@@ -104,9 +104,9 @@ if (!$conn) {
             <form method="POST" action="">
                 <label for="fullText">Keyword Search:</label><br><br>
                 <label for="artist">Title:</label><br>
-                <input type="text" name="title" id="title" placeholder="Sök efter Title" value="<?php echo htmlspecialchars($title); ?>"><br>
+                <input type="text" name="title" id="title" placeholder="Search for Title" value="<?php echo htmlspecialchars($title); ?>"><br>
                 <label for="artist">Artist:</label><br>
-                <input type="text" name="artist" id="artist" placeholder="Sök efter Artist" value="<?php echo htmlspecialchars($artist); ?>"><br>
+                <input type="text" name="artist" id="artist" placeholder="Search for Artist" value="<?php echo htmlspecialchars($artist); ?>"><br>
 
                 <input type="submit" value="Search">
             </form>
@@ -114,8 +114,8 @@ if (!$conn) {
         <div id="FullText">
             <form method="POST" action="">
                 <label for="fullText">Full Text Search:</label><br><br>
-                <label for="artist">Title och/eller Artist:</label><br>
-                <input type="text" name="fullText" id="fullText" placeholder="Sök Title och/eller artist" value="<?php echo htmlspecialchars($fullText); ?>"><br>
+                <label for="artist">Title and/or Artist:</label><br>
+                <input type="text" name="fullText" id="fullText" placeholder="Search Title and/or Artist" value="<?php echo htmlspecialchars($fullText); ?>"><br>
                 <input type="submit" value="Search">
             </form>
         </div>
