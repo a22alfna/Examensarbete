@@ -2,9 +2,11 @@
 # är för */
 #searchForms{
     border: 2px solid;
+    border-radius: 15px;
     width: 500px;
     margin-left: auto;
     margin-right: auto;
+    
 }
 #Keyword {
     width: 50%;
@@ -16,8 +18,7 @@
     position: absolute;
     margin-right: 25px;
     display: inline-block;
-    /* left: 250px; */
-    /* bottom: auto;  */
+    
 }
 
 #welcome{
