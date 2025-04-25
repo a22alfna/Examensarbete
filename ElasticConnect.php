@@ -1,12 +1,25 @@
 <?php
-$searchMode = $_POST['searchMode'] ?? '';
+    
 $title = $_POST['title'] ?? '';
 $artist = $_POST['artist'] ?? '';
 $fullText = $_POST['fullText'] ?? '';
 
 $output = '';
+
+//Full text search
+if (!empty($fullText)) {
+    $query = [
+        'size' => 50,
+        'query' => [
+            'multi_match' => [
+                'query' => $fullText,
+                'fields' => ['title', 'artist']
+            ]
+        ]
+    ];
+}
 //Keyword search
-if ($searchMode === 'keyword' && (!empty($title) || !empty($artist))) {
+elseif (empty($fullText) && (!empty($title) || !empty($artist))) {
     
     $search = [];
 
@@ -25,21 +38,10 @@ if ($searchMode === 'keyword' && (!empty($title) || !empty($artist))) {
             ]
         ]
     ];
-} 
-//Full text search
-elseif ($searchMode === 'fullText' && !empty($fullText)) {
-    $query = [
-        'size' => 50,
-        'query' => [
-            'multi_match' => [
-                'query' => $fullText,
-                'fields' => ['title', 'artist']
-            ]
-        ]
-    ];
+} elseif (empty($fullText)) {
+    $output = "Please enter a song title or artist to search.";
 }
 
-// Run search if query is set
 if (isset($query)) {
     $ch = curl_init('http://localhost:9200/songs_index_new/_search');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -88,32 +90,30 @@ if (isset($query)) {
         <p>Type something in the search box below:</p>
     </div>
 
-    <div id="searchForms" style="display: flex; gap: 40px;">
-    <!-- Fulltext Search -->
-    <div>
-        <form method="POST" action="">
-            <label for="fullText">Keyword Search:</label><br><br>
-            <label for="artist">Title:</label><br>
-            <input type="hidden" name="searchMode" value="fulltext">
-            <label for="fulltext">Search title and/or artist:</label><br>
-            <input type="text" name="fulltext" id="fulltext" value="<?php echo htmlspecialchars($fulltextQuery); ?>"><br><br>
-            <input type="submit" value="Fulltext Search">
-        </form>
-    </div>
+    <div id="searchForms" >
+        <!-- Keyword Search -->
+        <div id="Keyword">
+            <form method="POST" action="">
+                <label for="keyWord">Keyword Search:</label><br><br>
+                <label for="artist">Title:</label><br>
+                <input type="text" name="title" id="title" placeholder="Search for Title" value="<?php echo htmlspecialchars($title); ?>"><br>
+                <label for="artist">Artist:</label><br>
+                <input type="text" name="artist" id="artist" placeholder="Search for Artist" value="<?php echo htmlspecialchars($artist); ?>"><br>
 
-    <!-- Keyword Search -->
-    <div>
-        <form method="POST" action="">
-            <h3>Keyword (Exact Match) Search</h3>
-            <input type="hidden" name="searchMode" value="keyword">
-            <label for="title">Title:</label><br>
-            <input type="text" name="title" id="title" value="<?php echo htmlspecialchars($title); ?>"><br><br>
-            <label for="artist">Artist:</label><br>
-            <input type="text" name="artist" id="artist" value="<?php echo htmlspecialchars($artist); ?>"><br><br>
-            <input type="submit" value="Keyword Search">
-        </form>
+                <input type="submit" value="Search">
+            </form>
+        </div>
+        <!-- Fulltext Search -->
+        <div id="FullText">
+            <form method="POST" action="">
+                <label for="fullText">Full Text Search:</label><br><br>
+                <label for="artist">Title and/or Artist:</label><br>
+                <input type="text" name="fullText" id="fullText" placeholder="Search Title and/or Artist" value="<?php echo htmlspecialchars($fullText); ?>"><br>
+                <input type="submit" value="Search">
+            </form>
+        </div>
+
     </div>
-</div>
 
 
     <div id="outputField">
