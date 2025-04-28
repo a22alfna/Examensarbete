@@ -58,7 +58,7 @@ if (!$conn) {
          $params = array("$artist"); //"%$artist%"
     }
 
-    $result = pg_query_params($conn, $query, $params); //$params borttagen för exakta keyword sök
+    $result = pg_query_params($conn, $query, $params); 
 
     if ($result && pg_num_rows($result) > 0) {
         while ($row = pg_fetch_assoc($result)) {
@@ -106,7 +106,7 @@ if (!$conn) {
                 <label for="artist">Artist:</label><br>
                 <input type="text" name="artist" id="artist" placeholder="Search for Artist" value="<?php echo htmlspecialchars($artist); ?>"><br>
 
-                <input type="submit" value="Search">
+                <input type="submit" id="SearchKeyword" value="Search">
             </form>
         </div>
         <div id="FullText">
@@ -114,7 +114,7 @@ if (!$conn) {
                 <label for="fullText">Full Text Search:</label><br><br>
                 <label for="artist">Title and/or Artist:</label><br>
                 <input type="text" name="fullText" id="fullText" placeholder="Search Title and/or Artist" value="<?php echo htmlspecialchars($fullText); ?>"><br>
-                <input type="submit" value="Search">
+                <input type="submit" id="SearchFulltext" value="Search">
             </form>
         </div>
     </div>

@@ -100,7 +100,7 @@ if (isset($query)) {
                 <label for="artist">Artist:</label><br>
                 <input type="text" name="artist" id="artist" placeholder="Search for Artist" value="<?php echo htmlspecialchars($artist); ?>"><br>
 
-                <input type="submit" value="Search">
+                <input type="submit" id="SearchKeyword" value="Search">
             </form>
         </div>
         <!-- Fulltext Search -->
@@ -109,7 +109,7 @@ if (isset($query)) {
                 <label for="fullText">Full Text Search:</label><br><br>
                 <label for="artist">Title and/or Artist:</label><br>
                 <input type="text" name="fullText" id="fullText" placeholder="Search Title and/or Artist" value="<?php echo htmlspecialchars($fullText); ?>"><br>
-                <input type="submit" value="Search">
+                <input type="submit" id="SearchFulltext" value="Search">
             </form>
         </div>
 
