@@ -30,10 +30,7 @@ def splitta_csv(filväg, rader_per_fil, output_mapp):
 
 # Kör funktionen
 splitta_csv(
-    "C:/Users/alfre/OneDrive/Skrivbord/dataset.csv",
-    100000,
-    r"C:\Users\alfre\OneDrive\Skrivbord\UppDelatDataset"
+    "C:/Users/alfre/OneDrive/Skrivbord/UppDelatDataset/output_1.csv",
+    25000,
+    r"C:\Users\alfre\OneDrive\Skrivbord\UppDelatDataset\MindreUppdelning"
 )
-
-
-
