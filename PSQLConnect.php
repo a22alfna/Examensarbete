@@ -14,9 +14,11 @@ $output = '';
 // Create connection
 $conn = pg_connect("host=$host dbname=$dbname user=$user password=$password");
 //Full text search
-if (!empty($fullText)) {
+if (!$conn) {
+    $output = "Database connection failed.";
+}elseif (!empty($fullText)) {
     $tsquery = preg_replace('/\s+/', ' & ', $fullText);
-
+    
     $query = "SELECT * FROM \"Songs\" 
               WHERE to_tsvector('english', title || ' ' || artist) @@ to_tsquery('english', $1)";
     $params = array($tsquery);
@@ -49,13 +51,13 @@ if (!$conn) {
 
     if (!empty($title) && !empty($artist)) {
         $query = 'SELECT * FROM "Songs" WHERE title = $1 AND artist = $2';
-         $params = array("$title", "$artist"); //%$title% "%$artist%"
+         $params = array("$title", "$artist"); //%$title% "%$artist%" för partial search
     } elseif (!empty($title)) {
         $query = 'SELECT * FROM "Songs" WHERE title = $1';
-         $params = array("$title");// %$title%
+         $params = array("$title");// %$title% för partial search
     } elseif (!empty($artist)) {
         $query = 'SELECT * FROM "Songs" WHERE artist = $1'; //ILIKE $1 utbytt till $artist för exakta keyword sök
-         $params = array("$artist"); //"%$artist%"
+         $params = array("$artist"); //"%$artist%" för partial search
     }
 
     $result = pg_query_params($conn, $query, $params); 
@@ -97,26 +99,29 @@ if (!$conn) {
         <p>Type something in the search box below:</p>
     </div>
     
-    <div id="searchForms">
+    <div id="searchForms" >
+        <!-- Keyword Search -->
         <div id="Keyword">
             <form method="POST" action="">
-                <label for="fullText">Keyword Search:</label><br><br>
-                <label for="artist">Title:</label><br>
-                <input type="text" name="title" id="title" placeholder="Search for Title" value="<?php echo htmlspecialchars($title); ?>"><br>
+                <h2>Keyword search</h2>
+                <label for="title">Title:</label><br>
+                <input id="title" type="text" name="title" placeholder="Search for Title" value="<?php echo htmlspecialchars($title); ?>"><br>
                 <label for="artist">Artist:</label><br>
-                <input type="text" name="artist" id="artist" placeholder="Search for Artist" value="<?php echo htmlspecialchars($artist); ?>"><br>
+                <input id="artist" type="text" name="artist" placeholder="Search for Artist" value="<?php echo htmlspecialchars($artist); ?>"><br>
 
                 <input type="submit" id="SearchKeyword" value="Search">
             </form>
         </div>
+        <!-- Fulltext Search -->
         <div id="FullText">
             <form method="POST" action="">
-                <label for="fullText">Full Text Search:</label><br><br>
-                <label for="artist">Title and/or Artist:</label><br>
-                <input type="text" name="fullText" id="fullText" placeholder="Search Title and/or Artist" value="<?php echo htmlspecialchars($fullText); ?>"><br>
+                <h2>Fulltext Search</h2>
+                <label for="fullText">Title and/or Artist:</label><br>
+                <input id="fullText" type="text" name="fullText" placeholder="Search Title and/or Artist" value="<?php echo htmlspecialchars($fullText); ?>"><br>
                 <input type="submit" id="SearchFulltext" value="Search">
             </form>
         </div>
+
     </div>
       
 

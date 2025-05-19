@@ -71,7 +71,7 @@ if (isset($query)) {
         $output = "No results found.";
     }
 } else {
-    $output = "Please enter a search term.";
+    $output = "Please enter a song title or artist to search.";
 }
 
 ?>
@@ -94,11 +94,11 @@ if (isset($query)) {
         <!-- Keyword Search -->
         <div id="Keyword">
             <form method="POST" action="">
-                <label for="keyWord">Keyword Search:</label><br><br>
-                <label for="artist">Title:</label><br>
-                <input type="text" name="title" id="title" placeholder="Search for Title" value="<?php echo htmlspecialchars($title); ?>"><br>
+                <h2>Keyword search</h2>
+                <label for="title">Title:</label><br>
+                <input id="title" type="text" name="title" placeholder="Search for Title" value="<?php echo htmlspecialchars($title); ?>"><br>
                 <label for="artist">Artist:</label><br>
-                <input type="text" name="artist" id="artist" placeholder="Search for Artist" value="<?php echo htmlspecialchars($artist); ?>"><br>
+                <input id="artist" type="text" name="artist" placeholder="Search for Artist" value="<?php echo htmlspecialchars($artist); ?>"><br>
 
                 <input type="submit" id="SearchKeyword" value="Search">
             </form>
@@ -106,9 +106,9 @@ if (isset($query)) {
         <!-- Fulltext Search -->
         <div id="FullText">
             <form method="POST" action="">
-                <label for="fullText">Full Text Search:</label><br><br>
-                <label for="artist">Title and/or Artist:</label><br>
-                <input type="text" name="fullText" id="fullText" placeholder="Search Title and/or Artist" value="<?php echo htmlspecialchars($fullText); ?>"><br>
+                <h2>Fulltext Search</h2>
+                <label for="fullText">Title and/or Artist:</label><br>
+                <input id="fullText" type="text" name="fullText" placeholder="Search Title and/or Artist" value="<?php echo htmlspecialchars($fullText); ?>"><br>
                 <input type="submit" id="SearchFulltext" value="Search">
             </form>
         </div>
