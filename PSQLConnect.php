@@ -50,14 +50,14 @@ if (!$conn) {
 }elseif (empty($fullText) && (!empty($title) || !empty($artist))) {
 
     if (!empty($title) && !empty($artist)) {
-        $query = 'SELECT * FROM "Songs" WHERE title = $1 AND artist = $2';
-         $params = array("$title", "$artist"); //%$title% "%$artist%" för partial search
+        $query = 'SELECT * FROM "Songs" WHERE title ILIKE $1 AND artist ILIKE $2';
+        $params = array("$title%", "$artist%"); //%$title% "%$artist%" för partial search
     } elseif (!empty($title)) {
-        $query = 'SELECT * FROM "Songs" WHERE title = $1';
-         $params = array("$title");// %$title% för partial search
+        $query = 'SELECT * FROM "Songs" WHERE title ILIKE $1';
+        $params = array("$title%"); // %$title% för partial search
     } elseif (!empty($artist)) {
-        $query = 'SELECT * FROM "Songs" WHERE artist = $1'; //ILIKE $1 utbytt till $artist för exakta keyword sök
-         $params = array("$artist"); //"%$artist%" för partial search
+        $query = 'SELECT * FROM "Songs" WHERE artist ILIKE $1';//ILIKE $1 utbytt till $artist för exakta keyword sök
+        $params = array("$artist%"); //"%$artist%" för partial search
     }
 
     $result = pg_query_params($conn, $query, $params); 

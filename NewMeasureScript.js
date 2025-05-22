@@ -19,10 +19,10 @@
     let searchTerms = JSON.parse(localStorage.getItem('searchTerms') || "[]");
     let elapsedData = JSON.parse(localStorage.getItem('elapsedTimes') || "[]");
 
-    const nrWords = 100;// Antal mätningar
+    const nrWords = 2000;// Antal mätningar
     const seed = 10;
-    const searchFieldId = "fullText";// ID på sökfält
-    const searchButtonId = "SearchFulltext";// ID på sökknapp
+    const searchFieldId = "artist";// ID på sökfält byt till artist för keyword sökning
+    const searchButtonId = "SearchKeyword";// ID på sökknapp byt till SearchKeyword för keyword sökning
     Math.setSeed((count % nrWords) + seed);
     /*** SLUT PÅ KONFIGURATION ***/
 
