@@ -11,79 +11,66 @@ $fullText = $_POST['fullText'] ?? '';
 
 $output = '';
 
-// Create connection
+// Create DB connection
 $conn = pg_connect("host=$host dbname=$dbname user=$user password=$password");
-//Full text search
+
 if (!$conn) {
     $output = "Database connection failed.";
-}elseif (!empty($fullText)) {
-    $tsquery = preg_replace('/\s+/', ' & ', $fullText);
-    
-    $query = "SELECT * FROM \"Songs\" 
-              WHERE to_tsvector('english', title || ' ' || artist) @@ to_tsquery('english', $1)";
-    $params = array($tsquery);
+} else {
+    $query = null;
+    $params = [];
 
-    $result = pg_query_params($conn, $query, $params);
+    // Full-text search
+    if (!empty($fullText)) {
+        $tsquery = preg_replace('/\s+/', ' & ', $fullText);
+        $query = "SELECT * FROM \"Songs\" 
+                  WHERE to_tsvector('english', title || ' ' || artist) @@ to_tsquery('english', $1) 
+                  LIMIT 50";
+        $params = [$tsquery];
 
-    if ($result && pg_num_rows($result) > 0) {
-        while ($row = pg_fetch_assoc($result)) {
-            $output .= "<div style='margin-bottom:10px;'>";
-            $output .= "<strong> " . htmlspecialchars($row['title']) . "</strong><br>";
-            $output .= "Artist: " . htmlspecialchars($row['artist']) . "<br>";
-            $output .= "Rank: " . htmlspecialchars($row['rank']) . "<br>";
-            $output .= "Date: " . htmlspecialchars($row['date']) . "<br>";
-            $output .= "Url: " . htmlspecialchars($row['url']) . "<br>";
-            $output .= "Region: " . htmlspecialchars($row['region']) . "<br>";
-            $output .= "Chart: " . htmlspecialchars($row['chart']) . "<br>";
-            $output .= "Trend: " . htmlspecialchars($row['trend']) . "<br>";
-            $output .= "Streams: " . htmlspecialchars($row['streams']) . "<br>";
-            $output .= "</div>";
+    // Keyword search
+    } elseif (!empty($title) || !empty($artist)) {
+        if (!empty($title) && !empty($artist)) {
+            $query = 'SELECT * FROM "Songs" WHERE title LIKE $1 AND artist ILIKE $2 LIMIT 50';
+            $params = ["$title%", "$artist%"];
+        } elseif (!empty($artist)) {
+            $query = 'SELECT * FROM "Songs" WHERE artist LIKE $1 LIMIT 50';
+            $params = ["$artist%"];
+        } elseif (!empty($title)) {
+            $query = 'SELECT * FROM "Songs" WHERE title LIKE $1 LIMIT 50';
+            $params = ["$title%"];
         }
+
     } else {
-        $output = "No results found.";
-    }
-}
-
-//Keyword search
-if (!$conn) {
-    $output = "Database connection failed.";
-}elseif (empty($fullText) && (!empty($title) || !empty($artist))) {
-
-    if (!empty($title) && !empty($artist)) {
-        $query = 'SELECT * FROM "Songs" WHERE title ILIKE $1 AND artist ILIKE $2';
-        $params = array("$title%", "$artist%"); //%$title% "%$artist%" för partial search
-    } elseif (!empty($title)) {
-        $query = 'SELECT * FROM "Songs" WHERE title ILIKE $1';
-        $params = array("$title%"); // %$title% för partial search
-    } elseif (!empty($artist)) {
-        $query = 'SELECT * FROM "Songs" WHERE artist ILIKE $1';//ILIKE $1 utbytt till $artist för exakta keyword sök
-        $params = array("$artist%"); //"%$artist%" för partial search
+        $output = "Please enter a song title or artist to search.";
     }
 
-    $result = pg_query_params($conn, $query, $params); 
+    // Execute query if set
+    if ($query !== null) {
+        $result = pg_query_params($conn, $query, $params);
 
-    if ($result && pg_num_rows($result) > 0) {
-        while ($row = pg_fetch_assoc($result)) {
-            $output .= "<div style='margin-bottom:10px;'>";
-            $output .= "<strong> " . htmlspecialchars($row['title']) . "</strong><br>";
-            $output .= "Artist: " . htmlspecialchars($row['artist']) . "<br>";
-            $output .= "Rank: " . htmlspecialchars($row['rank']) . "<br>";
-            $output .= "Date: " . htmlspecialchars($row['date']) . "<br>";
-            $output .= "Url: " . htmlspecialchars($row['url']) . "<br>";
-            $output .= "Region: " . htmlspecialchars($row['region']) . "<br>";
-            $output .= "Chart: " . htmlspecialchars($row['chart']) . "<br>";
-            $output .= "Trend: " . htmlspecialchars($row['trend']) . "<br>";
-            $output .= "Streams: " . htmlspecialchars($row['streams']) . "<br>";
-            $output .= "</div>";;
+        if ($result && pg_num_rows($result) > 0) {
+            while ($row = pg_fetch_assoc($result)) {
+                $output .= "<div style='margin-bottom:10px;'>";
+                $output .= "<strong>" . htmlspecialchars($row['title']) . "</strong><br>";
+                $output .= "Artist: " . htmlspecialchars($row['artist']) . "<br>";
+                $output .= "Rank: " . htmlspecialchars($row['rank']) . "<br>";
+                $output .= "Date: " . htmlspecialchars($row['date']) . "<br>";
+                $output .= "Url: " . htmlspecialchars($row['url']) . "<br>";
+                $output .= "Region: " . htmlspecialchars($row['region']) . "<br>";
+                $output .= "Chart: " . htmlspecialchars($row['chart']) . "<br>";
+                $output .= "Trend: " . htmlspecialchars($row['trend']) . "<br>";
+                $output .= "Streams: " . htmlspecialchars($row['streams']) . "<br>";
+                $output .= "</div>";
+            }
+        } else {
+            $output = "No results found.";
         }
-    } else {
-        $output = "No results found.";
     }
-} elseif (empty($fullText)) {
-    $output = "Please enter a song title or artist to search.";
 }
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
